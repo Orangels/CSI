@@ -24,6 +24,7 @@ def creat_cameras(area: AreaCreat,
     # TODO MQTT client
     return area_service.create_area(area)
 
+
 @router.post("/api/device/deleteCameraAreas",
              status_code=status.HTTP_204_NO_CONTENT)
 def delete_area_by_camera_id(camera_id: int,
@@ -43,7 +44,7 @@ def delete_area_by_id(area_id: int,
 
 @router.post("/api/device/updateArea", response_model=Area, status_code=status.HTTP_200_OK)
 def update_area_by_id(area_id: int, area_update: AreaUpdate, area_service: AreaService = Depends(get_local_service)):
-    updated_area = area_service.update_user(area_id, area_update)
+    updated_area = area_service.update_area(area_id, area_update)
     if updated_area is None:
         raise HTTPException(status_code=404, detail="User not found")
     # TODO MQTT client

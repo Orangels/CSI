@@ -6,6 +6,8 @@ class CameraBase(SQLModel):
     frame_height: int
     frame_width: int
     MAC: str
+    name: str | None
+    description: str | None
 
 
 class Camera(CameraBase, table=True):

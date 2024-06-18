@@ -55,7 +55,7 @@ class AreaService:
                 # TODO  return
 
 
-    def update_user(self, area_id: int, area_update: AreaUpdate) -> Area:
+    def update_area(self, area_id: int, area_update: AreaUpdate) -> Area:
         with Session(engine) as session:
             area = session.get(Area, area_id)
             if not area:
