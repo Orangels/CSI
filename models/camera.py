@@ -8,6 +8,7 @@ class CameraBase(SQLModel):
     MAC: str
     name: str | None
     description: str | None
+    state: int = 1  # 1在线, 0 不在线
 
 
 class Camera(CameraBase, table=True):
@@ -23,3 +24,7 @@ class CameraUpdate(CameraBase):
     frame_height: int | None = None
     frame_width: int | None = None
     MAC: str | None = None
+    name: str | None
+    description: str | None
+    state: int = 1  # 1在线, 0 不在线
+
