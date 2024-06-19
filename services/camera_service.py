@@ -1,10 +1,23 @@
 from typing import List, Optional
 from sqlmodel import Session, select
 from models.camera import Camera, CameraCreat, CameraUpdate
+from models.area import Area
 from database import engine
 from services.area_service import AreaService
 from fastapi import HTTPException
 from pydantic import BaseModel
+
+
+class CameraBody(BaseModel):
+    Camera_addr: str  # rtsp 地址
+    frame_height: int
+    frame_width: int
+    MAC: str
+    name: str | None
+    description: str | None
+    state: int = 1  # 1在线, 0 不在线
+    Camera_id: int
+    areas: List[Area] = []
 
 
 class CameraService:
@@ -17,9 +30,24 @@ class CameraService:
             session.refresh(new_camera)
         return new_camera
 
-    def get_all_cameras(self) -> List[Camera]:
+    def get_all_cameras(self) -> List[CameraBody]:
+        resp = []
+        merged_data = dict()
         with Session(engine) as session:
-            return session.query(Camera).all()
+            statement = select(Camera, Area).join(Area, isouter=True)
+            results = session.exec(statement).all()
+            for camera, area in results:
+                camera_resp = CameraBody(**camera.dict())
+                if area is not None:
+                    camera_resp.areas.append(area)
+                merged_data[camera_resp.Camera_id] = camera_resp
+                resp.append(camera_resp)
+
+        for item in resp:
+            if len(item.areas) > 0:
+                if item.areas[0].id != merged_data[item.Camera_id].areas[0].id:
+                    merged_data[item.Camera_id].areas.append(item.areas[0])
+        return list(merged_data.values())
 
 
     def delete_camera(self, Camera_id: int) -> bool:
@@ -29,5 +57,6 @@ class CameraService:
                 session.delete(camera)
                 session.commit()
                 # TODO  return
+        #TODO 同一事务
         area_service = AreaService()
         area_service.delete_area_by_camera_id(Camera_id)

@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from models.camera import Camera, CameraCreat, CameraUpdate
-from services.camera_service import CameraService
+from services.camera_service import CameraService, CameraBody
 from fastapi.responses import JSONResponse
 
 router = APIRouter()
@@ -11,7 +11,7 @@ def get_local_service():
     return CameraService()
 
 
-@router.post("/api/device/cameras", response_model=List[Camera],
+@router.post("/api/device/cameras", response_model=List[CameraBody],
              status_code=status.HTTP_200_OK)
 def get_all_cameras(camera_service: CameraService = Depends(get_local_service)):
     return camera_service.get_all_cameras()

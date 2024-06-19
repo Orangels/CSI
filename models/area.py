@@ -1,13 +1,13 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 
 
 class AreaBase(SQLModel):
-    Camera_id: int  #
     name: str
     area_coordinate: str  # splice ;
-    event_type: str  # splice ;
+    event_type: int  # splice ;
     area_type: int = 0  # 0: 多边形
     time: int  # 秒级时间戳 (更新时间)
+    Camera_id: int = Field(default=None, foreign_key="camera.Camera_id")
 
 
 class Area(AreaBase, table=True):
@@ -21,5 +21,5 @@ class AreaCreat(AreaBase):
 class AreaUpdate(AreaBase):
     area_coordinate: str | None = None  # splice ;
     name: str | None = None
-    event_type: str | None = None  # splice ;
+    event_type: int | None = None  # splice ;
     area_type: str | None = 0  # 0: 多边形

@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from models.area import Area
 
 
 class CameraBase(SQLModel):
@@ -9,6 +10,7 @@ class CameraBase(SQLModel):
     name: str | None
     description: str | None
     state: int = 1  # 1在线, 0 不在线
+    areas: list["Area"] = Relationship(back_populates="area")
 
 
 class Camera(CameraBase, table=True):
