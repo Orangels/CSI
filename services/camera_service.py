@@ -6,6 +6,7 @@ from database import engine
 from services.area_service import AreaService
 from fastapi import HTTPException
 from pydantic import BaseModel
+import time
 
 
 class CameraBody(BaseModel):
@@ -49,7 +50,6 @@ class CameraService:
                     merged_data[item.Camera_id].areas.append(item.areas[0])
         return list(merged_data.values())
 
-
     def delete_camera(self, Camera_id: int) -> bool:
         with Session(engine) as session:
             camera = session.get(Camera, Camera_id)
@@ -57,6 +57,20 @@ class CameraService:
                 session.delete(camera)
                 session.commit()
                 # TODO  return
-        #TODO 同一事务
+        # TODO 同一事务
         area_service = AreaService()
         area_service.delete_area_by_camera_id(Camera_id)
+
+    def update_camera(self, camera_id: int,
+                      camera_update: CameraUpdate) -> Camera:
+        with Session(engine) as session:
+            camera = session.get(Camera, camera_id)
+            if not camera:
+                raise HTTPException(status_code=404, detail="Area not found")
+            for var, value in camera_update.dict(exclude_unset=True).items():
+                setattr(camera, var,
+                        value if value is not None else getattr(camera, var))
+            camera.time = int(time.time())
+            session.commit()
+            session.refresh(camera)
+            return camera

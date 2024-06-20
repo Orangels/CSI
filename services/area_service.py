@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 from sqlmodel import Session, select, delete
 from models.area import Area, AreaCreat, AreaUpdate
@@ -62,6 +63,7 @@ class AreaService:
                 raise HTTPException(status_code=404, detail="Area not found")
             for var, value in area_update.dict(exclude_unset=True).items():
                 setattr(area, var, value if value is not None else getattr(area, var))
+            area.time = int(time.time())
             session.commit()
             session.refresh(area)
             return area
