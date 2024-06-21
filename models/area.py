@@ -21,6 +21,6 @@ class AreaCreat(AreaBase):
 class AreaUpdate(AreaBase):
     area_coordinate: str | None = None  # splice ;
     name: str | None = None
-    event_type: int | None = None  # splice ;
+    event_type: str | None = None  # splice ;
     area_type: str | None = 0  # 0: 多边形
     time: int | None = int(time.time())  # 秒级时间戳 (更新时间)

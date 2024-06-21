@@ -35,3 +35,12 @@ class EventService:
             if len(results.all()) == 0:
                 raise HTTPException(status_code=404, detail="Event not found")
             return results.all()
+
+    def get_all(self) -> List[eventRecord]:
+        with Session(engine) as session:
+            statement = select(eventRecord).limit(10)
+            results = session.exec(statement)
+            data = results.all()
+            if len(data) == 0:
+                return []
+            return data
