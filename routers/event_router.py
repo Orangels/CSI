@@ -5,8 +5,14 @@ from services.event_service import EventService, eventBody
 
 router = APIRouter()
 
+
 def get_local_service():
     return EventService()
+
+
+@router.post("/api/device/CreatEvents", response_model=eventRecord, status_code=status.HTTP_201_CREATED)
+def creat_events(event: eventRecordCreat, event_service: EventService = Depends(get_local_service)):
+    return event_service.create_event(event)
 
 
 @router.post("/api/device/events", response_model=List[eventRecord], status_code=status.HTTP_200_OK)
