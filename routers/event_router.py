@@ -5,6 +5,7 @@ from services.event_service import EventService, eventBody
 
 router = APIRouter()
 
+
 def get_local_service():
     return EventService()
 
@@ -18,3 +19,7 @@ def creat_events(event: eventRecordCreat, event_service: EventService = Depends(
 def query_events(event: eventBody, event_service: EventService = Depends(get_local_service)):
     return event_service.get_event_by_camera_id_timestamp(event)
 
+
+@router.post("/api/device/allevents", response_model=List[eventRecord], status_code=status.HTTP_200_OK)
+def query_events(event_service: EventService = Depends(get_local_service)):
+    return event_service.get_all()
