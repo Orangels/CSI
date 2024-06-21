@@ -10,7 +10,7 @@ def get_local_service():
     return EventService()
 
 
-@router.post("/api/device/CreatEvents", response_model=eventRecord, status_code=status.HTTP_201_OK)
+@router.post("/api/device/CreatEvents", response_model=eventRecord, status_code=status.HTTP_201_CREATED)
 def creat_events(event: eventRecordCreat, event_service: EventService = Depends(get_local_service)):
     return event_service.create_event(event)
 

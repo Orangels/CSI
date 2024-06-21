@@ -1,0 +1,42 @@
+EVENT_TYPE:
+  - NAME: "人员核查"
+    TYPE_ID: 1201
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: "区域计数，基于图片核查到岗"
+  - NAME: "电子围栏"
+    TYPE_ID: 1202
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: "禁入区域入侵检测"
+  - NAME: "安全帽检测"
+    TYPE_ID: 1401
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: ""
+  - NAME: "跌倒检测"
+    TYPE_ID: 1501
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: ""
+  - NAME: "烟火检测"
+    TYPE_ID: 2101
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: ""
+  - NAME: "积水检测"
+    TYPE_ID: 2102
+    AUTHORITY_LEVEL: 0
+    DESCRIPTION: ""
+  - NAME: "设备状态检测"
+    TYPE_ID: 3101
+    AUTHORITY_LEVEL: 10
+    DESCRIPTION: "柜锁状态"
+  - NAME: "反光衣检测"
+    TYPE_ID: 1402
+    AUTHORITY_LEVEL: 20
+    DESCRIPTION: "柜锁状态"
+  - NAME: "打架检测"
+    TYPE_ID: 1502
+    AUTHORITY_LEVEL: 20
+    DESCRIPTION: ""
+  - NAME: "抽烟检测"
+    TYPE_ID: 1311
+    AUTHORITY_LEVEL: 20
+    DESCRIPTION: ""
+
