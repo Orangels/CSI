@@ -4,7 +4,7 @@ from models.event_record import eventRecord, eventRecordCreat, eventRecordUpdate
 from database import engine
 from fastapi import HTTPException
 from pydantic import BaseModel
-
+from sqlalchemy import desc
 
 class eventBody(BaseModel):
     camera_id: str
@@ -36,9 +36,9 @@ class EventService:
                 raise HTTPException(status_code=404, detail="Event not found")
             return results.all()
 
-    def get_all(self) -> List[eventRecord]:
+    def get_all(self,count=10) -> List[eventRecord]:
         with Session(engine) as session:
-            statement = select(eventRecord).limit(10)
+            statement = select(eventRecord).order_by(desc(eventRecord.time)).limit(count)
             results = session.exec(statement)
             data = results.all()
             if len(data) == 0:

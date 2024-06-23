@@ -20,15 +20,14 @@ def creatEvents():
 
     img = cv2.imread('./imgs/event1.jpg')
     retval, buffer = cv2.imencode('.jpg', img)
-    image_base64 = base64.b64encode(buffer).decode()
-
+    image_base64 = base64.b64encode(buffer).decode("utf-8")
     for i in range(10):
 
-        upload_event = dict(Camera_id=random.randint(1, 4), area="",
+        upload_event = dict(Camera_id=random.randint(1, 4), area="随便生成",
                             event=y_config["event_type"]['EVENT_TYPE'][
                                 random.randint(0, 9)]['NAME'],
                             time=int(time.time()) - i*10,
-                            image=image_base64, is_upload=False)
+                            image="data:image/jpeg;base64,"+image_base64, is_upload=False)
 
         postMethod("http://127.0.0.1:8000/api/device/CreatEvents", upload_event)
 
