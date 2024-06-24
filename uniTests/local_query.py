@@ -12,7 +12,7 @@ def postMethod(url, data):
     post_json = json.dumps(data)
 
     r = requests.post(url, headers=headers, data=post_json)
-    print(r.text)
+    return r.text
 
 
 def creatEvents():

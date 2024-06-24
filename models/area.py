@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Field, Relationship
 import time
 
+
 class AreaBase(SQLModel):
     name: str
     area_coordinate: str  # splice ;
