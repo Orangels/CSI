@@ -20,6 +20,6 @@ def query_events(event: eventBody, event_service: EventService = Depends(get_loc
     return event_service.get_event_by_camera_id_timestamp(event)
 
 
-@router.post("/api/device/allevents", response_model=List[eventRecord], status_code=status.HTTP_200_OK)
-def query_events(event_service: EventService = Depends(get_local_service)):
-    return event_service.get_all()
+@router.post("/api/device/allevents",response_model=List[eventRecord], status_code=status.HTTP_200_OK)
+def query_events(limit: int=10, event_service: EventService = Depends(get_local_service)):
+    return event_service.get_all(limit)

@@ -75,3 +75,6 @@ UnitTest/fisheye/IVE_SDK_2.3.12.1_Linux/
 *.clion.*
 *c_file*
 *debug*
+.vscode
+data/
+data/api.db
