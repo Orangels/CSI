@@ -2,6 +2,7 @@ import time
 from typing import List, Optional
 from sqlmodel import Session, select, delete
 from models.area import Area, AreaCreat, AreaUpdate
+from models.camera import Camera
 from database import engine
 from fastapi import HTTPException
 from pydantic import BaseModel

@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, Field, Relationship
-from models.area import Area
 import time
 
 
@@ -12,7 +11,8 @@ class CameraBase(SQLModel):
     description: str | None
     state: int = 1  # 1在线, 0 不在线
     time: int | None = int(time.time())  # 秒级时间戳 (更新时间)
-    areas: list["Area"] = Relationship(back_populates="area")
+
+    areas: list["Area"] | None = Relationship(back_populates="camera")
 
 
 class Camera(CameraBase, table=True):

@@ -25,30 +25,38 @@ class CameraService:
 
     def create_camera(self, camera: CameraCreat) -> Camera:
         new_camera = Camera(**camera.dict())
+        new_camera.time = int(time.time())
         with Session(engine) as session:
             session.add(new_camera)
             session.commit()
             session.refresh(new_camera)
         return new_camera
 
-    def get_all_cameras(self) -> List[CameraBody]:
-        resp = []
-        merged_data = dict()
-        with Session(engine) as session:
-            statement = select(Camera, Area).join(Area, isouter=True)
-            results = session.exec(statement).all()
-            for camera, area in results:
-                camera_resp = CameraBody(**camera.dict())
-                if area is not None:
-                    camera_resp.areas.append(area)
-                merged_data[camera_resp.Camera_id] = camera_resp
-                resp.append(camera_resp)
 
-        for item in resp:
-            if len(item.areas) > 0:
-                if item.areas[0].id != merged_data[item.Camera_id].areas[0].id:
-                    merged_data[item.Camera_id].areas.append(item.areas[0])
-        return list(merged_data.values())
+    def get_all_cameras(self) -> List[Camera]:
+        with Session(engine) as session:
+            cameras = session.query(Camera).all()
+            return cameras
+
+
+    # def get_all_cameras(self) -> List[CameraBody]:
+    #     resp = []
+    #     merged_data = dict()
+    #     with Session(engine) as session:
+    #         statement = select(Camera, Area).join(Area, isouter=True)
+    #         results = session.exec(statement).all()
+    #         for camera, area in results:
+    #             camera_resp = CameraBody(**camera.dict())
+    #             if area is not None:
+    #                 camera_resp.areas.append(area)
+    #             merged_data[camera_resp.Camera_id] = camera_resp
+    #             resp.append(camera_resp)
+    #
+    #     for item in resp:
+    #         if len(item.areas) > 0:
+    #             if item.areas[0].id != merged_data[item.Camera_id].areas[0].id:
+    #                 merged_data[item.Camera_id].areas.append(item.areas[0])
+    #     return list(merged_data.values())
 
     def delete_camera(self, Camera_id: int) -> bool:
         with Session(engine) as session:
