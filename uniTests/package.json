@@ -1,0 +1,25 @@
+{
+    "total": int,
+    "pages": int,
+    "statistics": {
+      "event_count":
+        [
+          {
+            "name": str,
+            "count": int
+          }
+        ]
+    },
+    "current_page": int,
+    "limit": int,
+    "data": [
+      {
+        camera: obj
+        area: str  # area 名称
+        event: str
+        time: int  # 秒级时间戳
+        image: str  # base64 图片
+        is_upload: bool  # 0: 未上传, 1: 已上传
+      }
+    ]
+}

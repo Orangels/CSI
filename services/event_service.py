@@ -36,7 +36,7 @@ class EventService:
                 raise HTTPException(status_code=404, detail="Event not found")
             return results.all()
 
-    def get_all(self,count=10) -> List[eventRecord]:
+    def get_all(self, count=10) -> List[eventRecord]:
         with Session(engine) as session:
             statement = select(eventRecord).order_by(desc(eventRecord.time)).limit(count)
             results = session.exec(statement)

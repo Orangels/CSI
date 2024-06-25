@@ -21,5 +21,5 @@ def query_events(event: eventBody, event_service: EventService = Depends(get_loc
 
 
 @router.post("/api/device/allevents",response_model=List[eventRecord], status_code=status.HTTP_200_OK)
-def query_events(limit:int=10,event_service: EventService = Depends(get_local_service)):
+def query_events(limit: int=10, event_service: EventService = Depends(get_local_service)):
     return event_service.get_all(limit)
