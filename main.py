@@ -5,6 +5,7 @@ from routers.event_router import router as event_router
 from routers.camera_router import router as camera_router
 from routers.area_router import router as area_router
 from routers.eventType_router import router as eventType_router
+from routers.stream_router import router as stream_router
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -39,7 +40,7 @@ app.include_router(event_router)
 app.include_router(camera_router)
 app.include_router(area_router)
 app.include_router(eventType_router)
-
+app.include_router(stream_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

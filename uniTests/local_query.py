@@ -27,7 +27,7 @@ def creatEvents():
                             event=y_config["event_type"]['EVENT_TYPE'][
                                 random.randint(0, 9)]['NAME'],
                             time=int(time.time()) - i*10,
-                            image="data:image/jpeg;base64,"+image_base64, is_upload=False)
+                            image="../images/event1.jpg", is_upload=False)
 
         postMethod("http://127.0.0.1:8000/api/device/CreatEvents", upload_event)
 

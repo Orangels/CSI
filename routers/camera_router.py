@@ -55,33 +55,3 @@ def update_camera_by_id(
         raise HTTPException(status_code=404, detail="User not found")
     # TODO MQTT client
     return updated_camera
-
-
-
-@router.get("/api/device/rtsp")
-async def stream_video(url:str,request:Request):
-    process = (
-        ffmpeg
-        .input(url)
-        .output('pipe:1', format='flv', codec='copy')
-        .global_args('-re') 
-        .run_async(pipe_stdout=True, pipe_stderr=True)
-    )
-
-    async def video_stream():
-        try:
-            while True:
-
-                if await request.is_disconnected():
-                    print("断开连接")
-                    process.terminate()
-                    break
-                chunk = await asyncio.to_thread(process.stdout.read, 4096)
-                if not chunk:
-                    break
-                yield chunk
-        except Exception as e:
-            process.terminate()
-            raise e
-
-    return StreamingResponse(video_stream(), media_type='video/x-flv')
