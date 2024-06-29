@@ -68,35 +68,38 @@ def update_camera_by_id(
     # TODO MQTT client
     return updated_camera
 
-STEAM_SERVER_PORT = 8005
-
+STREAM_SERVER_PORT = 8005
+STREAM_SERVER_SECRET="9AfMK3utUmoWGFybU58ncrgCTt42cMtX"
 def add_zlm_stream_sroxy(camera:Camera):
     #实际播放地址为ws/http ://127.0.0.1:8005/camera/{Camera_id}.live.flv
-    url = f"http://127.0.0.1:{STEAM_SERVER_PORT}/index/api/addStreamProxy?secret=9AfMK3utUmoWGFybU58ncrgCTt42cMtX&vhost=__defaultVhost__&app=camera&stream={camera.Camera_id}&enable_rtmp=1&url={camera.Camera_addr}"
+    url = f"http://127.0.0.1:{STREAM_SERVER_PORT}/index/api/addStreamProxy?secret={STREAM_SERVER_SECRET}&vhost=__defaultVhost__&app=camera&stream={camera.Camera_id}&enable_rtmp=1&url={camera.Camera_addr}"
     response = requests.request("GET", url)
     print(response.text)
 
 def del_zlm_stream_sroxy(camera_id):
-    url = f"http://127.0.0.1:{STEAM_SERVER_PORT}/index/api/delStreamProxy?secret=9AfMK3utUmoWGFybU58ncrgCTt42cMtX&key=__defaultVhost__/camera/{camera_id}"
+    url = f"http://127.0.0.1:{STREAM_SERVER_PORT}/index/api/delStreamProxy?secret={STREAM_SERVER_SECRET}&key=__defaultVhost__/camera/{camera_id}"
     response = requests.request("GET", url)
     print(response.text)
 
 def sync_zlm_stream_proxy(camera_service: CameraService = Depends(get_local_service)):
-    url = "http://127.0.0.1:{STEAM_SERVER_PORT}/index/api/getMediaList?secret=9AfMK3utUmoWGFybU58ncrgCTt42cMtX"
+    url = f"http://127.0.0.1:{STREAM_SERVER_PORT}/index/api/getMediaList?secret={STREAM_SERVER_SECRET}"
     response = requests.request("GET", url)
     if response.status_code == 200:
-        response_data = response.json()
-        server_proxy_data = response_data.get('data', [])
-        server_streams = {camera.get('stream') for camera in server_proxy_data}
-        cameras = camera_service.get_all_cameras()
-        local_camera_ids = {camera['id'] for camera in cameras}
+        try:
+            response_data = response.json()
+            server_proxy_data = response_data.get('data', [])
+            server_streams = {camera.get('stream') for camera in server_proxy_data}
+            cameras = camera_service.get_all_cameras()
+            local_camera_ids = {camera['id'] for camera in cameras}
 
-        cameras_to_delete = server_streams - local_camera_ids
-        for camera_id in cameras_to_delete:
-            del_zlm_stream_sroxy(camera_id)
+            cameras_to_delete = server_streams - local_camera_ids
+            for camera_id in cameras_to_delete:
+                del_zlm_stream_sroxy(camera_id)
 
-        cameras_to_add = local_camera_ids - server_streams
-        for camera_id in cameras_to_add:
-            camera_to_add = next((camera for camera in cameras if camera.Camera_id == camera_id), None)
-            if cameras_to_add:
-                add_zlm_stream_sroxy(cameras_to_add)
+            cameras_to_add = local_camera_ids - server_streams
+            for camera_id in cameras_to_add:
+                camera = next((camera for camera in cameras if camera.Camera_id == camera_id), None)
+                if camera:
+                    add_zlm_stream_sroxy(camera)
+        except Exception as e:
+            print(f"Error syncing stream proxy: {e}")
