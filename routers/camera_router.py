@@ -30,7 +30,7 @@ def creat_cameras(
 ):
     # TODO MQTT client
     new_camera = camera_service.create_camera(camera)
-    add_zlm_stream_sroxy(new_camera)
+    # add_zlm_stream_sroxy(new_camera)
     # TODO 判断数据库是否更新成功，返回camera状态，再添加推流 
     return new_camera
 
@@ -42,7 +42,7 @@ def delete_camera(
     camera_service.delete_camera(camera_id)
     # TODO MQTT client
 
-    del_zlm_stream_sroxy(camera_id)
+    # del_zlm_stream_sroxy(camera_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -61,9 +61,9 @@ def update_camera_by_id(
     if updated_camera is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    if origin_camera.Camera_addr != updated_camera.Camera_addr:
-        del_zlm_stream_sroxy(camera_id)
-        add_zlm_stream_sroxy(updated_camera)
+    # if origin_camera.Camera_addr != updated_camera.Camera_addr:
+    #     del_zlm_stream_sroxy(camera_id)
+    #     add_zlm_stream_sroxy(updated_camera)
 
     # TODO MQTT client
     return updated_camera
