@@ -82,3 +82,10 @@ class CameraService:
             session.commit()
             session.refresh(camera)
             return camera
+
+    def get_camera_by_id(self, Camera_id: int) -> Optional[Camera]:
+        with Session(engine) as session:
+            camera = session.get(Camera, Camera_id)
+            return camera
+    
+    
