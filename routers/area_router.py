@@ -2,7 +2,6 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from models.area import Area, AreaCreat, AreaUpdate
 from services.area_service import AreaService
-from fastapi.responses import JSONResponse
 
 router = APIRouter()
 

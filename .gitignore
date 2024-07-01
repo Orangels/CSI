@@ -78,3 +78,4 @@ UnitTest/fisheye/IVE_SDK_2.3.12.1_Linux/
 .vscode
 data/
 data/api.db
+static/

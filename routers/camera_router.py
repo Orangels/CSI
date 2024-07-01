@@ -1,9 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status,Request
 from models.camera import Camera, CameraCreat, CameraUpdate
-from services.camera_service import CameraService, CameraBody
-from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
+from services.camera_service import CameraService
 import requests
 
 router = APIRouter()

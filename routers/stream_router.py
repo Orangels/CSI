@@ -2,9 +2,6 @@ from fastapi import APIRouter, Request, WebSocketDisconnect, WebSocket
 from fastapi.responses import StreamingResponse
 import ffmpeg
 import asyncio
-import requests
-import os
-import signal
 
 router = APIRouter()
 
@@ -40,37 +37,37 @@ async def stream_video(url: str, request: Request):
 @router.websocket("/api/stream/rtspws")
 async def websocket_stream(websocket: WebSocket, url: str):
     await websocket.accept()
-    process = (
-        ffmpeg.input(url)
-        .output("pipe:1", format="flv", codec="copy")
-        .global_args("-re")
-        .run_async(pipe_stdout=True, pipe_stderr=True)
+    command = [
+        "ffmpeg",
+        "-i",
+        url,  # Input
+        "-rtsp_transport",
+        "tcp",
+        "-f",
+        "flv",  # Output format
+        "-c",
+        "copy",  # Codec
+        "pipe:",  # Output to stdout
+    ]
+
+    process = await asyncio.create_subprocess_exec(
+        *command,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
     )
     try:
-        while process.poll() is None:
-            try:
-                packet = await asyncio.wait_for(
-                    asyncio.to_thread(process.stdout.readline), 1000
-                )
-            except:
-                print("timeout")
-                packet = b''
+        while True:
+            packet = await process.stdout.read(8192)
             if not packet:
-                print("packet is None")
+                print("packet is none")
             await websocket.send_bytes(packet)
-        
-        print("process end")
     except WebSocketDisconnect:
         print("WebSocketDisconnect")
     except asyncio.TimeoutError:
-        print("timeout")
+        print("asyncio timeout")
     except Exception as e:
         print(f"unknown error: {e}")
     finally:
-        process.stdout.close()
-        process.stderr.close()
         process.terminate()
-        os.kill(process.pid, signal.SIGTERM)
-        process.wait()
+        await process.wait()
         await websocket.close()
-    print("over")
