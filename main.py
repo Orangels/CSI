@@ -1,3 +1,5 @@
+import uvicorn
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from database import create_db_and_tables
@@ -8,7 +10,16 @@ from routers.eventType_router import router as eventType_router
 from routers.stream_router import router as stream_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-import uvicorn
+from fastapi.responses import RedirectResponse,FileResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
+from asyncio.windows_events import ProactorEventLoop
+import os
+class ProactorServer(uvicorn.Server):
+    def run(self, sockets=None):
+        loop = ProactorEventLoop()
+        asyncio.set_event_loop(loop)
+        asyncio.run(self.serve(sockets=sockets))
 
 app = FastAPI()
 app.add_middleware(
@@ -43,23 +54,24 @@ app.include_router(area_router)
 app.include_router(eventType_router)
 app.include_router(stream_router)
 
-app.mount("/", StaticFiles(directory="static",html=True))
+app.mount("/static", StaticFiles(directory="static",html=True), name="static")
 
 
-import asyncio
-from asyncio.windows_events import ProactorEventLoop
-from uvicorn import Config, Server
-class ProactorServer(Server):
-    def run(self, sockets=None):
-        loop = ProactorEventLoop()
-        asyncio.set_event_loop(loop)
-        asyncio.run(self.serve(sockets=sockets))
+@app.get("/{full_path:path}")
+async def serve_react_app(request: Request, full_path: str):
+    static_files_dir = "static"
+    file_path = os.path.join(static_files_dir, full_path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    return FileResponse(os.path.join(static_files_dir, "index.html")) 
+
 
 
 
 if __name__ == "__main__":
-    #uvicorn.run(app, host="0.0.0.0", port=8000)
-    config = Config(app=app, host="0.0.0.0", port=8000, reload=False)
+    # uvicorn.run(app, host="0.0.0.0", port=8000)
+    #启用proactor loop
+    config = uvicorn.Config(app=app, host="0.0.0.0", port=8000, reload=False)
     server = ProactorServer(config=config)
     server.run()
 
