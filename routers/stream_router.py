@@ -60,6 +60,8 @@ async def websocket_stream(websocket: WebSocket, url: str):
             packet = await process.stdout.read(8192)
             if not packet:
                 print("packet is none")
+                await websocket.send_bytes(b'\x00\x00\x00\x00')
+                break
             await websocket.send_bytes(packet)
     except WebSocketDisconnect:
         print("WebSocketDisconnect")
